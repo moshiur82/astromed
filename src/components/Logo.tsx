@@ -1,0 +1,22 @@
+export default function Logo() {
+  return (
+    <svg
+      version="1.1"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 162.2 129.6"
+      style={{ enableBackground: 'new 0 0 162.2 129.6' }}
+      className="w-16 h-16"
+      aria-label="AstroMed AI Logo"
+    >
+      <style>{`.st0{fill:#1A2023;}`}</style>
+      <path
+        className="st0"
+        d="M139.4,129.6l22.8-1.1L91.3,1.9c-1.4-2.5-5.1-2.5-6.4,0.1L72.4,25.7h10.1L139.4,129.6z"
+      />
+      <path
+        className="st0"
+        d="M0,129.6c0,0,37.5-81.7,108.2-56.9c-7.9-2.8-16.7-3-24.9-1.9C60.8,73.7,41.7,87.6,27,104.2 C19.1,113.3,12.6,126.2,0,129.6z"
+      />
+    </svg>
+  );
+}
