@@ -8,6 +8,35 @@ type Vital = { id: number; astronaut_id: number; heart_rate: number; spo2: numbe
 
 type System = { id: number; system_name: string; status: string; value: string; unit: string }
 
+// Charts Component - Pure SVG, Mobile Ready, No Dependency Bug
+function MiniChart({ data, dataKey, color, domain }: { data: any[], dataKey: string, color: string, domain: [number, number] }) {
+  if (!data || data.length < 2) return <div className="h-full flex items-center justify-center text- text-zinc-400">Need 2+ readings</div>
+  
+  const width = 300
+  const height = 120
+  const padding = 20
+  const values = data.map(d => d[dataKey])
+  const min = domain[0]
+  const max = domain[1]
+  const range = max - min || 1
+  
+  const points = values.map((v, i) => {
+    const x = padding + (i / (values.length - 1)) * (width - padding * 2)
+    const y = height - padding - ((v - min) / range) * (height - padding * 2)
+    return `${x},${y}`
+  }).join(' ')
+  
+  const path = `M ${points}`
+  
+  return[STRIPPED 21 bytes]`0 0 ${width} ${height}`} className="w-full h-full">
+      <polyline fill="none" stroke={color} strokeWidth="1.5" points={points} />
+      {/* Grid lines */}
+      <line x1={padding} y1={padding} x2={padding} y2={height - padding} stroke="#f4f4f5" strokeWidth="1" />
+      <line x1={padding} y1={height - padding} x2={width - padding} y2={height - padding} stroke="#f4f4f5" strokeWidth="1" />
+    </svg>
+  )
+}
+
 export default function App() {
   const [tab, setTab] = useState<'overview' | 'astronauts' | 'systems'>('overview')
   const [astronauts, setAstronauts] = useState<Astronaut[]>([])
@@ -82,33 +111,7 @@ export default function App() {
             <div className="border border-zinc-200 rounded- p-4"><div className="text- uppercase text-zinc-400">Blood Pressure</div><div className="text- font-semibold mt-1">{latest ? `${latest.systolic}/${latest.diastolic}` : '—'}</div><div className="text- text-zinc-500 mt-1">Normal 120/80</div></div>
           </div>
 
-         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-  {[
-    { key: 'heart_rate', label: 'Heart Rate (bpm)', color: '#18181b', domain: [60, 90] },
-    { key: 'spo2', label: 'SpO2 (%)', color: '#18181b', domain: [94, 100] },
-    { key: 'temperature', label: 'Temperature (°C)', color: '#18181b', domain: [36, 38] },
-    { key: 'systolic', label: 'Systolic BP', color: '#52525b', domain: [110, 130] }
-  ].map(chart => (
-    <div key={chart.key} className="border border-zinc-200 rounded- p-4 md:p-6">
-      <h3 className="text- font-semibold mb-4">{chart.label} — {detailVitals.length} readings</h3>
-      <div className="h- w-full">
-        {detailVitals.length > 1 ? (
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={detailVitals}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f4f4f5" />
-              <XAxis dataKey="id" tick={{ fontSize: 10 }} hide />
-              <YAxis tick={{ fontSize: 10 }} stroke="#a1a1aa" width={35} domain={chart.domain as any} />
-              <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8, border: '1px solid #e4e4e7' }} />
-              <Line type="monotone" dataKey={chart.key} stroke={chart.color} strokeWidth={2} dot={false} isAnimationActive={false} />
-            </LineChart>
-          </ResponsiveContainer>
-        ) : (
-          <div className="h-full flex items-center justify-center text- text-zinc-400">Need at least 2 readings — Live simulation adding every 5s</div>
-        )}
-      </div>
-    </div>
-  ))}
-</div>
+         
 
           <div className="mt-8 border border-zinc-200 rounded- p-4 md:p-6">
             <h3 className="text- font-semibold mb-4">Recent Readings ({detailVitals.length})</h3>
@@ -122,7 +125,22 @@ export default function App() {
             </div>
           </div>
         </main>
+      </div><div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+  {[
+    { key: 'heart_rate', label: 'Heart Rate (bpm)', color: '#18181b', domain: [60, 90] as [number, number] },
+    { key: 'spo2', label: 'SpO2 (%)', color: '#18181b', domain: [94, 100] as [number, number] },
+    { key: 'temperature', label: 'Temperature (°C)', color: '#18181b', domain: [36, 38] as [number, number] },
+    { key: 'systolic', label: 'Systolic BP', color: '#52525b', domain: [110, 135] as [number, number] }
+  ].map(chart => (
+    <div key={chart.key} className="border border-zinc-200 rounded- p-4 md:p-6">
+      <h3 className="text- font-semibold mb-4">{chart.label} — Last: {detailVitals[detailVitals.length-1]?.[chart.key] || '—'}{chart.key==='temperature' ? '°C' : chart.key==='spo2' ? '%' : ''}</h3>
+      <div className="h- w-full bg-white">
+        <MiniChart data={detailVitals} dataKey={chart.key} color={chart.color} domain={chart.domain} />
       </div>
+      <div className="flex justify-between text- text-zinc-400 mt-2"><span>{chart.domain[0]}</span><span>{chart.domain[1]}</span></div>
+    </div>
+  ))}
+</div>
     )
   }
 
