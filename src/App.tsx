@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import { supabase } from './lib/supabase'
 import Logo from './components/Logo'
 
@@ -109,7 +108,7 @@ export default function App() {
               { key: 'systolic', label: 'Systolic BP', color: '#52525b', domain: [110, 135] as [number, number] }
             ].map(chart => (
               <div key={chart.key} className="border border-zinc-200 rounded-[16px] p-4 md:p-6">
-                <h3 className="text-[13px] font-semibold mb-4">{chart.label} — Last: {detailVitals[detailVitals.length-1]?.[chart.key] || '—'}</h3>
+                <h3 className="text- font-semibold mb-4">{chart.label} — Last: {(detailVitals[detailVitals.length-1] as any)?.[chart.key] || '—'}</h3>
                 <div className="h-[180px] w-full bg-white"><MiniChart data={detailVitals} dataKey={chart.key} color={chart.color} domain={chart.domain} /></div>
                 <div className="flex justify-between text-[10px] text-zinc-400 mt-2"><span>{chart.domain[0]}</span><span>{chart.domain[1]}</span></div>
               </div>
