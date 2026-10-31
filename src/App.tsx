@@ -1,76 +1,153 @@
+import { useState, useEffect } from 'react'
+import { supabase } from './lib/supabase'
 import Logo from './components/Logo'
 
-function App() {
+type HelloRow = {
+  id: number
+  message: string
+  created_at: string
+}
+
+type ApiStatus = {
+  status: string
+  message: string
+  database: string
+  count: number
+  timestamp: string
+}
+
+export default function App() {
+  const [message, setMessage] = useState('Hello World from AstroMed AI')
+  const [rows, setRows] = useState<HelloRow[]>([])
+  const [apiStatus, setApiStatus] = useState<ApiStatus | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [apiLoading, setApiLoading] = useState(true)
+
+  const fetchData = async () => {
+    const { data } = await supabase
+      .from('hello_world')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(10)
+    if (data) setRows(data)
+  }
+
+  const fetchApiStatus = async () => {
+    try {
+      const res = await fetch('/api/hello')
+      const json = await res.json()
+      setApiStatus(json)
+    } catch {
+      setApiStatus(null)
+    } finally {
+      setApiLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchData()
+    fetchApiStatus()
+  }, [])
+
+  const handlePost = async () => {
+    setLoading(true)
+    const { error } = await supabase
+      .from('hello_world')
+      .insert([{ message }])
+    
+    if (!error) {
+      await fetchData()
+      await fetchApiStatus()
+      setMessage('')
+    }
+    setLoading(false)
+  }
+
   return (
-    <div className="min-h-screen bg-white text-black">
-      {/* Top Header - Apple Style */}
-      <header className="border-b border-[#E5E7EB]">
-        <div className="max-w- mx-auto px-8 h- flex items-center justify-between">
-          <Logo />
-          <div className="flex gap-6 text- tracking-wide text-[#6B7280]">
-            <span>MISSION</span>
-            <span className="text-black">PROFILE</span>
+    <div className="min-h-screen bg-white text-zinc-900 font-[Inter] antialiased">
+      <header className="border-b border-zinc-200">
+        <div className="max-w-5xl mx-auto px-8 py-5 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Logo />
+            <span className="text- font-semibold tracking-tight">AstroMed AI</span>
           </div>
+          <nav className="flex gap-6 text- text-zinc-500">
+            <span className="text-zinc-900">Overview</span>
+            <span>Systems</span>
+            <span>Research</span>
+          </nav>
         </div>
       </header>
 
-      {/* Text Navigation - No Icons */}
-      <nav className="border-b border-[#E5E7EB]">
-        <div className="max-w- mx-auto px-8 h- flex items-center gap-8 text-">
-          <span className="text-black border-b border-black pb-">Overview</span>
-          <span className="text-[#6B7280]">Astronauts</span>
-          <span className="text-[#6B7280]">Missions</span>
-          <span className="text-[#6B7280]">Health</span>
-          <span className="text-[#6B7280]">Research</span>
-        </div>
-      </nav>
-
-      {/* Main Content */}
-      <main className="max-w- mx-auto px-8 py-16">
-        {/* Hero */}
-        <div className="mb-20">
-          <h1 className="text- font-[600] tracking-[-0.02em] leading-[1.1]">ASTROMED AI</h1>
-          <p className="text- text-[#6B7280] mt-2 font-[400]">Astronaut Health Intelligence</p>
-          <div className="mt-6 text- leading-[1.6] text-[#111111] max-w-">
-            <p>Continuous monitoring.</p>
-            <p>Clear insights.</p>
-          </div>
+      <main className="max-w-5xl mx-auto px-8 py-16">
+        <div className="mb-12">
+          <h1 className="text- font-[700] tracking-[-0.03em] leading-[1.1]">AstroMed AI</h1>
+          <p className="mt-4 text- text-zinc-500 max-w- leading-6">
+            Space health monitoring platform. Frontend + Backend API + Database live on free tier.
+          </p>
         </div>
 
-        {/* Cards - No Shadow, No Gradient */}
-        <div className="grid grid-cols-3 border border-[#E5E7EB]">
-          <div className="p-8 border-r border-[#E5E7EB]">
-            <div className="text- tracking-[0.08em] text-[#6B7280] uppercase">Cardiovascular</div>
-            <div className="text- font-[500] mt-4">72 bpm</div>
-            <div className="text- text-[#6B7280] mt-1">Heart rate</div>
+        <div className="grid grid-cols-3 gap-4 mb-10">
+          <div className="border border-zinc-200 rounded- p-5">
+            <div className="text- uppercase tracking-widest text-zinc-400 mb-2">Frontend</div>
+            <div className="text- font-medium">Live on Vercel</div>
+            <div className="text- text-zinc-500 mt-1">astromed-rho.vercel.app</div>
           </div>
-          <div className="p-8 border-r border-[#E5E7EB]">
-            <div className="text- tracking-[0.08em] text-[#6B7280] uppercase">Respiratory</div>
-            <div className="text- font-[500] mt-4">98%</div>
-            <div className="text- text-[#6B7280] mt-1">Oxygen saturation</div>
+          <div className="border border-zinc-200 rounded- p-5">
+            <div className="text- uppercase tracking-widest text-zinc-400 mb-2">Backend API</div>
+            <div className="text- font-medium">{apiLoading ? 'Checking...' : apiStatus ? apiStatus.status : 'offline'}</div>
+            <div className="text- text-zinc-500 mt-1">/api/hello — {apiStatus?.database || 'connecting'}</div>
           </div>
-          <div className="p-8">
-            <div className="text- tracking-[0.08em] text-[#6B7280] uppercase">Sleep</div>
-            <div className="text- font-[500] mt-4">7h 24m</div>
-            <div className="text- text-[#6B7280] mt-1">Sleep duration</div>
+          <div className="border border-zinc-200 rounded- p-5">
+            <div className="text- uppercase tracking-widest text-zinc-400 mb-2">Database</div>
+            <div className="text- font-medium">Supabase Postgres</div>
+            <div className="text- text-zinc-500 mt-1">{apiStatus ? `${apiStatus.count} records` : `${rows.length} records`}</div>
           </div>
         </div>
 
-        {/* Live Status Card */}
-        <div className="mt-12 border border-[#E5E7EB] p-8">
-          <div className="flex justify-between items-center">
-            <div>
-              <div className="text- tracking-[0.08em] text-[#6B7280] uppercase">System Status</div>
-              <div className="text- mt-3">Frontend: <span className="text-black font-[500]">Live</span></div>
-              <div className="text- mt-1 text-[#6B7280]">Backend: Pending | Database: Pending</div>
-            </div>
-            <div className="text- border border-[#E5E7EB] px-3 py-1">HELLO WORLD READY</div>
+        <div className="border border-zinc-200 rounded- p-8 mb-8">
+          <h2 className="text- font-semibold mb-6">Hello World — Live Database Test</h2>
+          <div className="flex gap-3 mb-8">
+            <input
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              placeholder="Type a message"
+              className="flex-1 border border-zinc-200 rounded- px-4 py-3 text- outline-none focus:border-zinc-900 transition"
+            />
+            <button
+              onClick={handlePost}
+              disabled={loading || !message.trim()}
+              className="bg-zinc-900 text-white text- font-medium px-6 py-3 rounded- hover:bg-black disabled:opacity-40 transition"
+            >
+              {loading ? 'Saving...' : 'POST to DB'}
+            </button>
+          </div>
+
+          <div className="space-y-3">
+            <div className="text- uppercase tracking-widest text-zinc-400">Live Records from Supabase</div>
+            {rows.length === 0 ? (
+              <div className="text- text-zinc-500 py-4">No records yet. POST your first message.</div>
+            ) : (
+              rows.map((row) => (
+                <div key={row.id} className="flex justify-between items-center border-b border-zinc-100 py-3 last:border-0">
+                  <span className="text-">{row.message}</span>
+                  <span className="text- text-zinc-400">{new Date(row.created_at).toLocaleString()}</span>
+                </div>
+              ))
+            )}
           </div>
         </div>
 
+        <div className="border border-zinc-200 rounded- p-5">
+          <div className="text- uppercase tracking-widest text-zinc-400 mb-3">System Status</div>
+          <div className="grid grid-cols-2 gap-4 text-">
+            <div className="flex justify-between"><span className="text-zinc-500">Frontend</span><span className="font-medium">Operational</span></div>
+            <div className="flex justify-between"><span className="text-zinc-500">Backend API</span><span className="font-medium">{apiStatus ? 'Operational' : 'Checking'}</span></div>
+            <div className="flex justify-between"><span className="text-zinc-500">Database</span><span className="font-medium">Connected</span></div>
+            <div className="flex justify-between"><span className="text-zinc-500">Last Sync</span><span className="font-medium">{apiStatus ? new Date(apiStatus.timestamp).toLocaleTimeString() : '—'}</span></div>
+          </div>
+        </div>
       </main>
     </div>
   )
 }
-
-export default App
