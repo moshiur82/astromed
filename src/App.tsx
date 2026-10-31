@@ -82,29 +82,33 @@ export default function App() {
             <div className="border border-zinc-200 rounded- p-4"><div className="text- uppercase text-zinc-400">Blood Pressure</div><div className="text- font-semibold mt-1">{latest ? `${latest.systolic}/${latest.diastolic}` : '—'}</div><div className="text- text-zinc-500 mt-1">Normal 120/80</div></div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {[
-              { key: 'heart_rate', label: 'Heart Rate (bpm)', color: '#18181b' },
-              { key: 'spo2', label: 'SpO2 (%)', color: '#18181b' },
-              { key: 'temperature', label: 'Temperature (°C)', color: '#18181b' },
-              { key: 'systolic', label: 'Systolic BP', color: '#52525b' }
-            ].map(chart => (
-              <div key={chart.key} className="border border-zinc-200 rounded- p-4 md:p-6">
-                <h3 className="text- font-semibold mb-4">{chart.label}</h3>
-                <div className="h-">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={detailVitals}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#f4f4f5" />
-                      <XAxis dataKey="id" hide />
-                      <YAxis tick={{ fontSize: 10 }} stroke="#a1a1aa" width={35} domain={['auto', 'auto']} />
-                      <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8, border: '1px solid #e4e4e7' }} />
-                      <Area type="monotone" dataKey={chart.key} stroke={chart.color} fill={`${chart.color}10`} strokeWidth={1.5} dot={false} isAnimationActive={false} />
-                    </AreaChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
-            ))}
-          </div>
+         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+  {[
+    { key: 'heart_rate', label: 'Heart Rate (bpm)', color: '#18181b', domain: [60, 90] },
+    { key: 'spo2', label: 'SpO2 (%)', color: '#18181b', domain: [94, 100] },
+    { key: 'temperature', label: 'Temperature (°C)', color: '#18181b', domain: [36, 38] },
+    { key: 'systolic', label: 'Systolic BP', color: '#52525b', domain: [110, 130] }
+  ].map(chart => (
+    <div key={chart.key} className="border border-zinc-200 rounded- p-4 md:p-6">
+      <h3 className="text- font-semibold mb-4">{chart.label} — {detailVitals.length} readings</h3>
+      <div className="h- w-full">
+        {detailVitals.length > 1 ? (
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={detailVitals}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f4f4f5" />
+              <XAxis dataKey="id" tick={{ fontSize: 10 }} hide />
+              <YAxis tick={{ fontSize: 10 }} stroke="#a1a1aa" width={35} domain={chart.domain as any} />
+              <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8, border: '1px solid #e4e4e7' }} />
+              <Line type="monotone" dataKey={chart.key} stroke={chart.color} strokeWidth={2} dot={false} isAnimationActive={false} />
+            </LineChart>
+          </ResponsiveContainer>
+        ) : (
+          <div className="h-full flex items-center justify-center text- text-zinc-400">Need at least 2 readings — Live simulation adding every 5s</div>
+        )}
+      </div>
+    </div>
+  ))}
+</div>
 
           <div className="mt-8 border border-zinc-200 rounded- p-4 md:p-6">
             <h3 className="text- font-semibold mb-4">Recent Readings ({detailVitals.length})</h3>
