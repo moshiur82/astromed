@@ -76,6 +76,19 @@ export default function App() {
     return () => clearInterval(id)
   }, [isLive, astronauts])
 
+
+// Alerts Logic
+const alerts = vitals.slice(-10).flatMap(v => {
+  const a = astronauts.find(x => x.id === v.astronaut_id)
+  const list = []
+  if (v.heart_rate > 100) list.push({ id: `${v.id}-hr-high`, type: 'critical', message: `High HR ${v.heart_rate} bpm — ${a?.name || 'Crew'}`, time: v.created_at })
+  if (v.heart_rate < 60) list.push({ id: `${v.id}-hr-low`, type: 'warning', message: `Low HR ${v.heart_rate} bpm — ${a?.name || 'Crew'}`, time: v.created_at })
+  if (v.spo2 < 95) list.push({ id: `${v.id}-spo2`, type: 'critical', message: `Low SpO2 ${v.spo2}% — ${a?.name || 'Crew'}`, time: v.created_at })
+  if (v.temperature > 37.5) list.push({ id: `${v.id}-temp`, type: 'warning', message: `High Temp ${v.temperature}°C — ${a?.name || 'Crew'}`, time: v.created_at })
+  return list
+}).slice(-5).reverse()
+
+
   const filteredVitals = vitals.filter(v => v.astronaut_id === selectedAstronaut).slice(-20)
   const latestVital = filteredVitals[filteredVitals.length - 1]
   const selectedAstro = astronauts.find(a => a.id === selectedAstronaut)
@@ -92,6 +105,19 @@ export default function App() {
             <div className="flex items-center gap-2"><span className={`w-2 h-2 rounded-full ${isLive ? 'bg-green-500 animate-pulse' : 'bg-zinc-300'}`}></span><span className="text-[11px] text-zinc-500">{isLive ? 'LIVE' : 'PAUSED'}</span></div>
           </div>
         </header>
+        
+        {alerts.length > 0 && (
+  <div className="max-w-6xl mx-auto px-4 md:px-8 pt-4">
+    <div className="space-y-2">
+      {alerts.map(alert => (
+        <div key={alert.id} className={`border rounded- p-3 flex justify-between items-center text- ${alert.type==='critical' ? 'border-red-200 bg-red-50 text-red-700' : 'border-amber-200 bg-amber-50 text-amber-700'}`}>
+          <span className="font-medium">⚠ {alert.message}</span>
+          <span className="text- opacity-70">{new Date(alert.time).toLocaleTimeString()}</span>
+        </div>
+      ))}
+    </div>
+  </div>
+)}
         <main className="max-w-6xl mx-auto px-4 md:px-8 py-6 md:py-10">
           <div className="mb-8"><h1 className="text-[28px] md:text-[32px] font-bold tracking-tight">{detailAstro.name}</h1><p className="text-[13px] text-zinc-500 mt-2">{detailAstro.role} • {detailAstro.mission} • {detailAstro.status}</p></div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-8">
