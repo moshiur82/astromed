@@ -1,5 +1,5 @@
 AstroMed AI: Space Health Monitoring Platform
-Challenge: Create Health Monitoring Software for Astronauts on Space Missions - NASA Space Apps 2025
+Challenge: Create Health Monitoring Software for Astronauts on Space Missions - NASA Space Apps 2026
 
 Live Demo: https://astromed-rho.vercel.app
 Python ML API: https://astromed-rho.vercel.app/api/predict
