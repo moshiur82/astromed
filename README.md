@@ -1,32 +1,20 @@
-# React + TypeScript + Vite
+AstroMed AI: Space Health Monitoring Platform
+Challenge: Create Health Monitoring Software for Astronauts on Space Missions - NASA Space Apps 2025
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Live Demo: https://astromed-rho.vercel.app
+Python ML API: https://astromed-rho.vercel.app/api/predict
+GitHub: https://github.com/moshiur82/astromed
 
-Currently, two official plugins are available:
+Project Summary
+AstroMed AI is a real-time, Apple-inspired space health monitoring platform designed for Artemis III, ISS Expedition 72, and Lunar Gateway missions.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Monitors vital signs (Heart Rate, SpO2, Temperature, BP), stress, and environmental systems through pure white UI optimized for mission control.
 
-## React Compiler
+Key Innovations: Live telemetry every 5s, Alerts System HR>100 Red, AI Prediction Python ML, PWA Installable, Export CSV/PDF, Search Crew.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
-```
-
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+How to Run
+git clone https://github.com/moshiur82/astromed.git
+npm install
+# .env.local: VITE_SUPABASE_URL and ANON_KEY
+npm run dev
+npm run build
