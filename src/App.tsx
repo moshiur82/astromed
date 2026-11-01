@@ -7,20 +7,10 @@ type Vital = { id: number; astronaut_id: number; heart_rate: number; spo2: numbe
 type System = { id: number; system_name: string; status: string; value: string; unit: string }
 
 function MiniChart(props: { data: any[], dataKey: string, color: string, domain: [number, number] }) {
-  const data = props.data
-  const dataKey = props.dataKey
-  const color = props.color
-  const domain = props.domain
-  if (!data || data.length < 2) {
-    return <div className="h-full flex items-center justify-center text-xs text-zinc-400">Need 2+ readings - Live adding every 5s</div>
-  }
-  const width = 300
-  const height = 120
-  const padding = 20
-  const values = data.map((d: any) => d[dataKey])
-  const min = domain[0]
-  const max = domain[1]
-  const range = max - min || 1
+  const data = props.data; const dataKey = props.dataKey; const color = props.color; const domain = props.domain
+  if (!data || data.length < 2) return <div className="h-full flex items-center justify-center text-xs text-zinc-400">Need 2+ readings</div>
+  const width = 300; const height = 120; const padding = 20
+  const values = data.map((d: any) => d[dataKey]); const min = domain[0]; const max = domain[1]; const range = max - min || 1
   const vb = "0 0 " + width + " " + height
   const points = values.map((v: number, i: number) => {
     const x = padding + (i / (values.length - 1)) * (width - padding * 2)
@@ -83,37 +73,35 @@ export default function App() {
     return () => clearInterval(id)
   }, [isLive, astronauts])
 
-const filteredAstronauts = astronauts.filter(a => a.name.toLowerCase().includes(search.toLowerCase()) || a.mission.toLowerCase().includes(search.toLowerCase()) || a.role.toLowerCase().includes(search.toLowerCase()))
-const filteredVitals = vitals.filter(v => v.astronaut_id === selectedAstronaut).slice(-20)
-const latestVital = filteredVitals[filteredVitals.length - 1] as any
-const selectedAstro = astronauts.find(a => a.id === selectedAstronaut)
-const detailAstro = astronauts.find(a => a.id === detailId)
-const detailVitals = vitals.filter(v => v.astronaut_id === detailId).slice(-30)
+  const filteredAstronauts = astronauts.filter(a => a.name.toLowerCase().includes(search.toLowerCase()) || a.mission.toLowerCase().includes(search.toLowerCase()) || a.role.toLowerCase().includes(search.toLowerCase()))
+  const filteredVitals = vitals.filter(v => v.astronaut_id === selectedAstronaut).slice(-20)
+  const latestVital = filteredVitals[filteredVitals.length - 1] as any
+  const selectedAstro = astronauts.find(a => a.id === selectedAstronaut)
+  const detailAstro = astronauts.find(a => a.id === detailId)
+  const detailVitals = vitals.filter(v => v.astronaut_id === detailId).slice(-30)
 
   useEffect(() => {
-  if (!latestVital) return
-  const fetchAI = async () => {
-    setAiLoading(true)
-    try {
-      const res = await fetch('/api/predict', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          heart_rate: latestVital.heart_rate,
-          spo2: latestVital.spo2,
-          temperature: latestVital.temperature,
-          systolic: latestVital.systolic
+    if (!latestVital) return
+    const fetchAI = async () => {
+      setAiLoading(true)
+      try {
+        const res = await fetch('/api/predict', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            heart_rate: latestVital.heart_rate,
+            spo2: latestVital.spo2,
+            temperature: latestVital.temperature,
+            systolic: latestVital.systolic
+          })
         })
-      })
-      const data = await res.json()
-      setAiResult(data)
-    } catch (e) {
-      setAiResult(null)
+        const data = await res.json()
+        setAiResult(data)
+      } catch (e) { setAiResult(null) }
+      setAiLoading(false)
     }
-    setAiLoading(false)
-  }
-  fetchAI()
-}, [latestVital])
+    fetchAI()
+  }, [latestVital])
 
   const alerts = vitals.slice(-15).flatMap((v: any) => {
     const a = astronauts.find(x => x.id === v.astronaut_id)
@@ -135,18 +123,8 @@ const detailVitals = vitals.filter(v => v.astronaut_id === detailId).slice(-30)
     const csv = [headers.join(','), ...rows].join('\n')
     const blob = new Blob([csv], { type: 'text/csv' })
     const url = URL.createObjectURL(blob)
-    const el = document.createElement('a')
-    el.href = url
-    el.download = "astromed-vitals-" + Date.now() + ".csv"
-    el.click()
+    const el = document.createElement('a'); el.href = url; el.download = "astromed-vitals-" + Date.now() + ".csv"; el.click()
   }
-
-  const filteredAstronauts = astronauts.filter(a => a.name.toLowerCase().includes(search.toLowerCase()) || a.mission.toLowerCase().includes(search.toLowerCase()) || a.role.toLowerCase().includes(search.toLowerCase()))
-  const filteredVitals = vitals.filter(v => v.astronaut_id === selectedAstronaut).slice(-20)
-  const latestVital = filteredVitals[filteredVitals.length - 1] as any
-  const selectedAstro = astronauts.find(a => a.id === selectedAstronaut)
-  const detailAstro = astronauts.find(a => a.id === detailId)
-  const detailVitals = vitals.filter(v => v.astronaut_id === detailId).slice(-30)
 
   if (detailId && detailAstro) {
     const latest = detailVitals[detailVitals.length - 1] as any
@@ -155,7 +133,7 @@ const detailVitals = vitals.filter(v => v.astronaut_id === detailId).slice(-30)
         <header className="border-b border-zinc-200 sticky top-0 bg-white/90 backdrop-blur z-10">
           <div className="max-w-6xl mx-auto px-4 md:px-8 py-4 flex items-center justify-between">
             <button onClick={() => setDetailId(null)} className="text-sm px-3 py-2 rounded-lg border border-zinc-200 hover:bg-zinc-50">Back to Crew</button>
-            <div className="flex items-center gap-2"><span className={isLive ? 'w-2 h-2 rounded-full bg-green-500 animate-pulse' : 'w-2 h-2 rounded-full bg-zinc-300'}></span><span className="text-xs text-zinc-500">{isLive ? 'LIVE' : 'PAUSED'}</span></div>
+            <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span><span className="text-xs text-zinc-500">LIVE</span></div>
           </div>
         </header>
         {alerts.length > 0 && (
@@ -163,8 +141,7 @@ const detailVitals = vitals.filter(v => v.astronaut_id === detailId).slice(-30)
             <div className="space-y-2">
               {alerts.map((alert: any) => (
                 <div key={alert.id} className={alert.type === 'critical' ? 'border rounded-xl p-3 flex justify-between items-center text-sm border-red-200 bg-red-50 text-red-700' : 'border rounded-xl p-3 flex justify-between items-center text-sm border-amber-200 bg-amber-50 text-amber-700'}>
-                  <span className="font-medium">{alert.message}</span>
-                  <span className="text-xs opacity-70">{new Date(alert.time).toLocaleTimeString()}</span>
+                  <span className="font-medium">{alert.message}</span><span className="text-xs opacity-70">{new Date(alert.time).toLocaleTimeString()}</span>
                 </div>
               ))}
             </div>
@@ -173,41 +150,24 @@ const detailVitals = vitals.filter(v => v.astronaut_id === detailId).slice(-30)
         <main className="max-w-6xl mx-auto px-4 md:px-8 py-6 md:py-10">
           <div className="mb-8"><h1 className="text-3xl font-bold tracking-tight">{detailAstro.name}</h1><p className="text-sm text-zinc-500 mt-2">{detailAstro.role} - {detailAstro.mission} - {detailAstro.status}</p></div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-8">
-            <div className="border border-zinc-200 rounded-xl p-4"><div className="text-xs uppercase text-zinc-400">Heart Rate</div><div className="text-xl font-semibold mt-1">{latest ? latest.heart_rate : '-'} bpm</div><div className="text-xs text-zinc-500 mt-1">Normal 60-100</div></div>
-            <div className="border border-zinc-200 rounded-xl p-4"><div className="text-xs uppercase text-zinc-400">SpO2</div><div className="text-xl font-semibold mt-1">{latest ? latest.spo2 : '-'}%</div><div className="text-xs text-zinc-500 mt-1">Normal 95-100%</div></div>
-            <div className="border border-zinc-200 rounded-xl p-4"><div className="text-xs uppercase text-zinc-400">Temperature</div><div className="text-xl font-semibold mt-1">{latest ? latest.temperature : '-'}C</div><div className="text-xs text-zinc-500 mt-1">Normal 36.1-37.2</div></div>
-            <div className="border border-zinc-200 rounded-xl p-4"><div className="text-xs uppercase text-zinc-400">Blood Pressure</div><div className="text-xl font-semibold mt-1">{latest ? latest.systolic + "/" + latest.diastolic : '-'}</div><div className="text-xs text-zinc-500 mt-1">Normal 120/80</div></div>
+            <div className="border border-zinc-200 rounded-xl p-4"><div className="text-xs uppercase text-zinc-400">Heart Rate</div><div className="text-xl font-semibold mt-1">{latest ? latest.heart_rate : '-'} bpm</div></div>
+            <div className="border border-zinc-200 rounded-xl p-4"><div className="text-xs uppercase text-zinc-400">SpO2</div><div className="text-xl font-semibold mt-1">{latest ? latest.spo2 : '-'}%</div></div>
+            <div className="border border-zinc-200 rounded-xl p-4"><div className="text-xs uppercase text-zinc-400">Temperature</div><div className="text-xl font-semibold mt-1">{latest ? latest.temperature : '-'}C</div></div>
+            <div className="border border-zinc-200 rounded-xl p-4"><div className="text-xs uppercase text-zinc-400">Blood Pressure</div><div className="text-xl font-semibold mt-1">{latest ? latest.systolic + "/" + latest.diastolic : '-'}</div></div>
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <div className="border border-zinc-200 rounded-2xl p-4 md:p-6"><h3 className="text-sm font-semibold mb-4">Heart Rate - Last</h3><div className="h-44 w-full bg-white"><MiniChart data={detailVitals} dataKey="heart_rate" color="#18181b" domain={[60, 115]} /></div></div>
-            <div className="border border-zinc-200 rounded-2xl p-4 md:p-6"><h3 className="text-sm font-semibold mb-4">SpO2 - Last</h3><div className="h-44 w-full bg-white"><MiniChart data={detailVitals} dataKey="spo2" color="#18181b" domain={[90, 100]} /></div></div>
-            <div className="border border-zinc-200 rounded-2xl p-4 md:p-6"><h3 className="text-sm font-semibold mb-4">Temperature - Last</h3><div className="h-44 w-full bg-white"><MiniChart data={detailVitals} dataKey="temperature" color="#18181b" domain={[36, 39]} /></div></div>
-            <div className="border border-zinc-200 rounded-2xl p-4 md:p-6"><h3 className="text-sm font-semibold mb-4">Systolic BP - Last</h3><div className="h-44 w-full bg-white"><MiniChart data={detailVitals} dataKey="systolic" color="#52525b" domain={[110, 135]} /></div></div>
+            <div className="border border-zinc-200 rounded-2xl p-4 md:p-6"><h3 className="text-sm font-semibold mb-4">Heart Rate</h3><div className="h-44 w-full"><MiniChart data={detailVitals} dataKey="heart_rate" color="#18181b" domain={[60, 115]} /></div></div>
+            <div className="border border-zinc-200 rounded-2xl p-4 md:p-6"><h3 className="text-sm font-semibold mb-4">SpO2</h3><div className="h-44 w-full"><MiniChart data={detailVitals} dataKey="spo2" color="#18181b" domain={[90, 100]} /></div></div>
+            <div className="border border-zinc-200 rounded-2xl p-4 md:p-6"><h3 className="text-sm font-semibold mb-4">Temperature</h3><div className="h-44 w-full"><MiniChart data={detailVitals} dataKey="temperature" color="#18181b" domain={[36, 39]} /></div></div>
+            <div className="border border-zinc-200 rounded-2xl p-4 md:p-6"><h3 className="text-sm font-semibold mb-4">Systolic BP</h3><div className="h-44 w-full"><MiniChart data={detailVitals} dataKey="systolic" color="#52525b" domain={[110, 135]} /></div></div>
           </div>
           <div className="mt-8 border border-zinc-900 rounded-2xl p-5 md:p-6 bg-zinc-900 text-white">
-  
-  <div className="flex justify-between items-start">
-    <div>
-      <div className="text-xs uppercase text-zincuseEffect(() => {
-  if (!latestVital) return
-  ...
-}, [latestVital])
-
-const alerts = ...
-const filteredVitals = ...
-const latestVital = ...">AstroMed AI Prediction</div>
-      <div className="text-xl font-bold mt-2">{aiLoading ? 'Analyzing...' : aiResult ? aiResult.prediction : 'Loading...'}</div>
-      <div className="text-sm text-zinc-400 mt-1">{aiResult ? aiResult.recommendation : ''}</div>
-    </div>
-    <div className="text-right">
-      <div className="text-xs uppercase text-zinc-400">Risk Score</div>
-      <div className={aiResult && aiResult.risk_score >= 70 ? 'text-2xl font-bold mt-2 text-red-400' : aiResult && aiResult.risk_score >= 40 ? 'text-2xl font-bold mt-2 text-amber-400' : 'text-2xl font-bold mt-2 text-green-400'}>{aiResult ? aiResult.risk_score + '%' : '-'}</div>
-      <div className="text-xs text-zinc-400 mt-1">{aiResult ? aiResult.risk_status : ''} - {aiResult ? Math.round(aiResult.confidence*100) + '% confidence' : ''}</div>
-    </div>
-  </div>
-  <div className="mt-4 text-xs text-zinc-500">Model: {aiResult ? aiResult.model : 'AstroMed ML v1'} - Live Python API - Free Tier</div>
-</div>
-
+            <div className="flex justify-between items-start">
+              <div><div className="text-xs uppercase text-zinc-400">AstroMed AI Prediction</div><div className="text-xl font-bold mt-2">{aiLoading ? 'Analyzing...' : aiResult ? aiResult.prediction : 'Loading...'}</div><div className="text-sm text-zinc-400 mt-1">{aiResult ? aiResult.recommendation : ''}</div></div>
+              <div className="text-right"><div className="text-xs uppercase text-zinc-400">Risk Score</div><div className={aiResult && aiResult.risk_score >= 70 ? 'text-2xl font-bold mt-2 text-red-400' : aiResult && aiResult.risk_score >= 40 ? 'text-2xl font-bold mt-2 text-amber-400' : 'text-2xl font-bold mt-2 text-green-400'}>{aiResult ? aiResult.risk_score + '%' : '-'}</div><div className="text-xs text-zinc-400 mt-1">{aiResult ? aiResult.risk_status : ''} - {aiResult ? Math.round(aiResult.confidence*100) + '% confidence' : ''}</div></div>
+            </div>
+            <div className="mt-4 text-xs text-zinc-500">Model: {aiResult ? aiResult.model : 'AstroMed ML v1'} - Live Python API</div>
+          </div>
           <div className="mt-8 border border-zinc-200 rounded-xl p-4 md:p-6">
             <div className="flex justify-between items-center mb-4"><h3 className="text-sm font-semibold">Recent Readings ({detailVitals.length})</h3><button onClick={exportCSV} className="text-xs px-3 py-1.5 rounded-lg border border-zinc-200 hover:bg-zinc-50">Export CSV</button></div>
             <div className="overflow-x-auto"><div className="min-w-"><div className="grid grid-cols-5 text-xs uppercase text-zinc-400 p-2 border-b"><div>Time</div><div>HR</div><div>SpO2</div><div>Temp</div><div>BP</div></div>{detailVitals.slice(-10).reverse().map((v: any)=>(<div key={v.id} className="grid grid-cols-5 text-sm p-2 border-b last:border-0"><div className="text-zinc-500">{new Date(v.created_at).toLocaleTimeString()}</div><div className={v.heart_rate>100 ? 'text-red-600 font-bold' : ''}>{v.heart_rate}</div><div className={v.spo2<95 ? 'text-red-600 font-bold' : ''}>{v.spo2}%</div><div>{v.temperature}C</div><div>{v.systolic}/{v.diastolic}</div></div>))}</div></div>
@@ -234,8 +194,7 @@ const latestVital = ...">AstroMed AI Prediction</div>
           <div className="space-y-2">
             {alerts.map((alert: any) => (
               <div key={alert.id} className={alert.type === 'critical' ? 'border rounded-xl p-3 flex justify-between items-center text-sm border-red-200 bg-red-50 text-red-700' : 'border rounded-xl p-3 flex justify-between items-center text-sm border-amber-200 bg-amber-50 text-amber-700'}>
-                <span className="font-medium">{alert.message}</span>
-                <span className="text-xs opacity-70">{new Date(alert.time).toLocaleTimeString()}</span>
+                <span className="font-medium">{alert.message}</span><span className="text-xs opacity-70">{new Date(alert.time).toLocaleTimeString()}</span>
               </div>
             ))}
           </div>
@@ -249,13 +208,13 @@ const latestVital = ...">AstroMed AI Prediction</div>
               <div className="border border-zinc-200 rounded-xl p-4 md:p-5"><div className="text-xs uppercase text-zinc-400">Active Crew</div><div className="text-2xl font-semibold mt-2">{astronauts.length}</div><div className="text-xs text-zinc-500 mt-1">{astronauts.filter(a=>a.status==='Active').length} active</div></div>
               <div className="border border-zinc-200 rounded-xl p-4 md:p-5"><div className="text-xs uppercase text-zinc-400">Heart Rate</div><div className="text-2xl font-semibold mt-2">{latestVital ? latestVital.heart_rate : '-'} bpm</div><div className="text-xs text-zinc-500 mt-1 truncate">{latestVital ? new Date(latestVital.created_at).toLocaleTimeString() : ''}</div></div>
               <div className="border border-zinc-200 rounded-xl p-4 md:p-5"><div className="text-xs uppercase text-zinc-400">Systems</div><div className="text-2xl font-semibold mt-2">{systems.filter(s=>s.status==='Operational').length}/{systems.length}</div><div className="text-xs text-zinc-500 mt-1">{systems.filter(s=>s.status==='Monitoring').length} monitoring</div></div>
-              <div className="border border-zinc-200 rounded-xl p-4 md:p-5"><div className="text-xs uppercase text-zinc-400">Database</div><div className="text-2xl font-semibold mt-2 flex items-center gap-2">Live <span className={isLive ? 'w-2 h-2 rounded-full bg-green-500 animate-pulse' : 'w-2 h-2 rounded-full bg-zinc-300'}></span></div><div className="text-xs text-zinc-500 mt-1">{vitals.length} records</div></div>
+              <div className="border border-zinc-200 rounded-xl p-4 md:p-5"><div className="text-xs uppercase text-zinc-400">Database</div><div className="text-2xl font-semibold mt-2 flex items-center gap-2">Live <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span></div><div className="text-xs text-zinc-500 mt-1">{vitals.length} records</div></div>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
               <div className="lg:col-span-2 border border-zinc-200 rounded-2xl p-4 md:p-6">
                 <div className="flex flex-col sm:flex-row justify-between gap-3 mb-6"><h3 className="text-sm font-semibold">Heart Rate - {selectedAstro ? selectedAstro.name : 'Select'}</h3><div className="flex gap-2 overflow-x-auto"><div className="flex gap-2">{astronauts.map((a: any) => (<button key={a.id} onClick={()=>setSelectedAstronaut(a.id)} className={selectedAstronaut===a.id ? 'whitespace-nowrap text-xs px-3 py-1 rounded-full bg-zinc-900 text-white' : 'whitespace-nowrap text-xs px-3 py-1 rounded-full border border-zinc-200 text-zinc-500'}>{a.name.split(' ').pop()}</button>))}</div></div></div>
                 <div className="h-56 w-full"><MiniChart data={filteredVitals} dataKey="heart_rate" color="#18181b" domain={[60, 115]} /></div>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6 pt-6 border-t border-zinc-100"><div><div className="text-xs text-zinc-400 uppercase">SpO2</div><div className="text-sm font-medium mt-1">{latestVital ? latestVital.spo2 : '-'}%</div></div><div><div className="text-xs text-zinc-400 uppercase">Temp</div><div className="text-sm font-medium mt-1">{latestVital ? latestVital.temperature : '-'}C</div></div><div><div className="text-xs text-zinc-400 uppercase">BP</div><div className="text-sm font-medium mt-1">{latestVital ? latestVital.systolic + "/" + latestVital.diastolic : '-'}</div></div><div><div className="text-xs text-zinc-400 uppercase">Status</div><div className="text-sm font-medium mt-1">{selectedAstro ? selectedAstro.status : '-'}</div></div></div>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6 pt-6 border-t border-zinc-100"><div><div className="text-xs text-zinc-400 uppercase">SpO2</div><div className="text-sm font-medium mt-1">{latestVital ? latestVital.spo2 : '-'}%</div></div><div><div className="text-xs text-zinc-400 uppercase">Temp</div><div className="text-sm font-medium mt-1">{latestVital ? latestVital.temperature : '-'}C</div></div><div><div className="text-xs text-zinc-400 uppercase">BP</div><div className="text-sm font-medium mt-1">{latestVital ? latestVital.systolic + "/" + latestVital.diastolic : '-'}</div></div><div><div className="text-xs text-zinc-400 uppercase">AI Risk</div><div className={aiResult && aiResult.risk_score >= 70 ? 'text-sm font-bold mt-1 text-red-600' : 'text-sm font-medium mt-1'}>{aiResult ? aiResult.risk_score + '% ' + aiResult.risk_status : 'Loading...'}</div></div></div>
               </div>
               <div className="border border-zinc-200 rounded-2xl p-4 md:p-6"><h3 className="text-sm font-semibold mb-4">Systems Status</h3><div className="space-y-3">{systems.map((s: any) => (<div key={s.id} className="flex justify-between items-center py-2 border-b border-zinc-100 last:border-0"><div><div className="text-sm font-medium">{s.system_name}</div><div className="text-xs text-zinc-500">{s.value} {s.unit}</div></div><span className={s.status==='Operational' ? 'text-xs px-2 py-1 rounded-full border border-zinc-900' : 'text-xs px-2 py-1 rounded-full border border-amber-300 text-amber-700'}>{s.status}</span></div>))}</div></div>
             </div>
