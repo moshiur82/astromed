@@ -1,3 +1,4 @@
+import HumanBodyMap from './components/HumanBodyMap'
 import { useState, useEffect } from 'react'
 import { supabase } from './lib/supabase'
 import Logo from './components/Logo'
@@ -160,6 +161,10 @@ export default function App() {
             <div className="border border-zinc-200 rounded-2xl p-4 md:p-6"><h3 className="text-sm font-semibold mb-4">SpO2</h3><div className="h-44 w-full"><MiniChart data={detailVitals} dataKey="spo2" color="#18181b" domain={[90, 100]} /></div></div>
             <div className="border border-zinc-200 rounded-2xl p-4 md:p-6"><h3 className="text-sm font-semibold mb-4">Temperature</h3><div className="h-44 w-full"><MiniChart data={detailVitals} dataKey="temperature" color="#18181b" domain={[36, 39]} /></div></div>
             <div className="border border-zinc-200 rounded-2xl p-4 md:p-6"><h3 className="text-sm font-semibold mb-4">Systolic BP</h3><div className="h-44 w-full"><MiniChart data={detailVitals} dataKey="systolic" color="#52525b" domain={[110, 135]} /></div></div>
+          </div>
+          {/* ✅ NEW — Astrological Body Map */}
+          <div className="mt-8">
+            <HumanBodyMap />
           </div>
           <div className="mt-8 border border-zinc-900 rounded-2xl p-5 md:p-6 bg-zinc-900 text-white">
             <div className="flex justify-between items-start">
