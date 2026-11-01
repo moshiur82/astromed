@@ -7,29 +7,7 @@ type Astronaut = { id: number; name: string; mission: string; role: string; stat
 type Vital = { id: number; astronaut_id: number; heart_rate: number; spo2: number; temperature: number; systolic: number; diastolic: number; created_at: string }
 type System = { id: number; system_name: string; status: string; value: string; unit: string }
 
-function MiniChart({ data, dataKey, color, domain }: { data: any[], dataKey: string, color: string, domain: [number, number] }) {
-  if (!data || data.length < 2) {
-    return <div className="h-full flex items-center justify-center text- text-zinc-400">Need 2+ readings - Live adding every 5s</div>
-  }
-  const width = 300
-  const height = 120
-  const padding = 20
-  const values = data.map((d: any) => d[dataKey])
-  const min = domain[0]
-  const max = domain[1]
-  const range = max - min || 1
-  const points = values.map((v: number, i: number) => {
-    const x = padding + (i / (values.length - 1)) * (width - padding * 2)
-    const y = height - padding - ((v - min) / range) * (height - padding * 2)
-    return `${x},${y}`
-  }).join(' ')
-  return[STRIPPED 21 bytes]`0 0 ${width} ${height}`} className="w-full h-full">
-      <polyline fill="none" stroke={color} strokeWidth="1.8" points={points} />
-      <line x1={padding} y1={padding} x2={padding} y2={height - padding} stroke="#f4f4f5" strokeWidth="1" />
-      <line x1={padding} y1={height - padding} x2={width - padding} y2={height - padding} stroke="#f4f4f5" strokeWidth="1" />
-    </svg>
-  )
-}
+
 
 export default function App() {
   const [tab, setTab] = useState<'overview' | 'astronauts' | 'systems'>('overview')
@@ -42,7 +20,30 @@ export default function App() {
   const [search, setSearch] = useState('')
 
   useEffect(() => {
-    const fetchAll = async () => {
+    const fetchAll = async () => {function MiniChart({ data, dataKey, color, domain }: { data: any[], dataKey: string, color: string, domain: [number, number] }) {
+  if (!data || data.length < 2) {
+    return <div className="h-full flex items-center justify-center text- text-zinc-400">Need 2+ readings - Live adding every 5s</div>
+  }
+  const width = 300
+  const height = 120
+  const padding = 20
+  const values = data.map((d: any) => d[dataKey])
+  const min = domain[0]
+  const max = domain[1]
+  const range = max - min || 1
+  const vb = "0 0 " + width + " " + height
+  const points = values.map((v: number, i: number) => {
+    const x = padding + (i / (values.length - 1)) * (width - padding * 2)
+    const y = height - padding - ((v - min) / range) * (height - padding * 2)
+    return x + "," + y
+  }).join(" ")
+  return[STRIPPED 35 bytes]"w-full h-full">
+      <polyline fill="none" stroke={color} strokeWidth="1.8" points={points}></polyline>
+      <line x1={padding} y1={padding} x2={padding} y2={height - padding} stroke="#f4f4f5" strokeWidth="1"></line>
+      <line x1={padding} y1={height - padding} x2={width - padding} y2={height - padding} stroke="#f4f4f5" strokeWidth="1"></line>
+    </svg>
+  )
+}
       const [a, v, s] = await Promise.all([
         supabase.from('astronauts').select('*').order('id'),
         supabase.from('vital_signs').select('*').order('created_at'),
