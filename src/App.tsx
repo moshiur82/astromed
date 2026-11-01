@@ -45,6 +45,8 @@ export default function App() {
   const [detailId, setDetailId] = useState<number | null>(null)
   const [isLive] = useState(true)
   const [search, setSearch] = useState('')
+  const [aiResult, setAiResult] = useState<any>(null)
+  const [aiLoading, setAiLoading] = useState(false)
 
   useEffect(() => {
     const fetchAll = async () => {
@@ -80,6 +82,31 @@ export default function App() {
     }, 5000)
     return () => clearInterval(id)
   }, [isLive, astronauts])
+
+  useEffect(() => {
+  if (!latestVital) return
+  const fetchAI = async () => {
+    setAiLoading(true)
+    try {
+      const res = await fetch('/api/predict', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          heart_rate: latestVital.heart_rate,
+          spo2: latestVital.spo2,
+          temperature: latestVital.temperature,
+          systolic: latestVital.systolic
+        })
+      })
+      const data = await res.json()
+      setAiResult(data)
+    } catch (e) {
+      setAiResult(null)
+    }
+    setAiLoading(false)
+  }
+  fetchAI()
+}, [latestVital])
 
   const alerts = vitals.slice(-15).flatMap((v: any) => {
     const a = astronauts.find(x => x.id === v.astronaut_id)
@@ -150,6 +177,23 @@ export default function App() {
             <div className="border border-zinc-200 rounded-2xl p-4 md:p-6"><h3 className="text-sm font-semibold mb-4">Temperature - Last</h3><div className="h-44 w-full bg-white"><MiniChart data={detailVitals} dataKey="temperature" color="#18181b" domain={[36, 39]} /></div></div>
             <div className="border border-zinc-200 rounded-2xl p-4 md:p-6"><h3 className="text-sm font-semibold mb-4">Systolic BP - Last</h3><div className="h-44 w-full bg-white"><MiniChart data={detailVitals} dataKey="systolic" color="#52525b" domain={[110, 135]} /></div></div>
           </div>
+          <div className="mt-8 border border-zinc-900 rounded-2xl p-5 md:p-6 bg-zinc-900 text-white">
+  
+  <div className="flex justify-between items-start">
+    <div>
+      <div className="text-xs uppercase text-zinc-400">AstroMed AI Prediction</div>
+      <div className="text-xl font-bold mt-2">{aiLoading ? 'Analyzing...' : aiResult ? aiResult.prediction : 'Loading...'}</div>
+      <div className="text-sm text-zinc-400 mt-1">{aiResult ? aiResult.recommendation : ''}</div>
+    </div>
+    <div className="text-right">
+      <div className="text-xs uppercase text-zinc-400">Risk Score</div>
+      <div className={aiResult && aiResult.risk_score >= 70 ? 'text-2xl font-bold mt-2 text-red-400' : aiResult && aiResult.risk_score >= 40 ? 'text-2xl font-bold mt-2 text-amber-400' : 'text-2xl font-bold mt-2 text-green-400'}>{aiResult ? aiResult.risk_score + '%' : '-'}</div>
+      <div className="text-xs text-zinc-400 mt-1">{aiResult ? aiResult.risk_status : ''} - {aiResult ? Math.round(aiResult.confidence*100) + '% confidence' : ''}</div>
+    </div>
+  </div>
+  <div className="mt-4 text-xs text-zinc-500">Model: {aiResult ? aiResult.model : 'AstroMed ML v1'} - Live Python API - Free Tier</div>
+</div>
+
           <div className="mt-8 border border-zinc-200 rounded-xl p-4 md:p-6">
             <div className="flex justify-between items-center mb-4"><h3 className="text-sm font-semibold">Recent Readings ({detailVitals.length})</h3><button onClick={exportCSV} className="text-xs px-3 py-1.5 rounded-lg border border-zinc-200 hover:bg-zinc-50">Export CSV</button></div>
             <div className="overflow-x-auto"><div className="min-w-"><div className="grid grid-cols-5 text-xs uppercase text-zinc-400 p-2 border-b"><div>Time</div><div>HR</div><div>SpO2</div><div>Temp</div><div>BP</div></div>{detailVitals.slice(-10).reverse().map((v: any)=>(<div key={v.id} className="grid grid-cols-5 text-sm p-2 border-b last:border-0"><div className="text-zinc-500">{new Date(v.created_at).toLocaleTimeString()}</div><div className={v.heart_rate>100 ? 'text-red-600 font-bold' : ''}>{v.heart_rate}</div><div className={v.spo2<95 ? 'text-red-600 font-bold' : ''}>{v.spo2}%</div><div>{v.temperature}C</div><div>{v.systolic}/{v.diastolic}</div></div>))}</div></div>
