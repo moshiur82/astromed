@@ -83,6 +83,13 @@ export default function App() {
     return () => clearInterval(id)
   }, [isLive, astronauts])
 
+const filteredAstronauts = astronauts.filter(a => a.name.toLowerCase().includes(search.toLowerCase()) || a.mission.toLowerCase().includes(search.toLowerCase()) || a.role.toLowerCase().includes(search.toLowerCase()))
+const filteredVitals = vitals.filter(v => v.astronaut_id === selectedAstronaut).slice(-20)
+const latestVital = filteredVitals[filteredVitals.length - 1] as any
+const selectedAstro = astronauts.find(a => a.id === selectedAstronaut)
+const detailAstro = astronauts.find(a => a.id === detailId)
+const detailVitals = vitals.filter(v => v.astronaut_id === detailId).slice(-30)
+
   useEffect(() => {
   if (!latestVital) return
   const fetchAI = async () => {
@@ -181,7 +188,14 @@ export default function App() {
   
   <div className="flex justify-between items-start">
     <div>
-      <div className="text-xs uppercase text-zinc-400">AstroMed AI Prediction</div>
+      <div className="text-xs uppercase text-zincuseEffect(() => {
+  if (!latestVital) return
+  ...
+}, [latestVital])
+
+const alerts = ...
+const filteredVitals = ...
+const latestVital = ...">AstroMed AI Prediction</div>
       <div className="text-xl font-bold mt-2">{aiLoading ? 'Analyzing...' : aiResult ? aiResult.prediction : 'Loading...'}</div>
       <div className="text-sm text-zinc-400 mt-1">{aiResult ? aiResult.recommendation : ''}</div>
     </div>
