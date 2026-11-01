@@ -43,7 +43,7 @@ export default function App() {
   const [systems, setSystems] = useState<System[]>([])
   const [selectedAstronaut, setSelectedAstronaut] = useState<number>(1)
   const [detailId, setDetailId] = useState<number | null>(null)
-  const [isLive, setIsLive] = useState(true)
+  const [isLive] = useState(true)
   const [search, setSearch] = useState('')
 
   useEffect(() => {
