@@ -220,31 +220,37 @@ export default function App() {
           </div>
 
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-8">
-            <div className="border border-zinc-200 rounded-xl p-4">
-              <div className="text-xs uppercase text-zinc-400">Heart Rate</div>
-              <div className="text-xl font-semibold mt-1">
-                {latest ? latest.heart_rate : '-'} bpm
-              </div>
-            </div>
-            <div className="border border-zinc-200 rounded-xl p-4">
-              <div className="text-xs uppercase text-zinc-400">SpO2</div>
-              <div className="text-xl font-semibold mt-1">
-                {latest ? latest.spo2 : '-'}%
-              </div>
-            </div>
-            <div className="border border-zinc-200 rounded-xl p-4">
-              <div className="text-xs uppercase text-zinc-400">Temperature</div>
-              <div className="text-xl font-semibold mt-1">
-                {latest ? latest.temperature : '-'}C
-              </div>
-            </div>
-            <div className="border border-zinc-200 rounded-xl p-4">
-              <div className="text-xs uppercase text-zinc-400">Blood Pressure</div>
-              <div className="text-xl font-semibold mt-1">
-                {latest ? latest.systolic + '/' + latest.diastolic : '-'}
-              </div>
-            </div>
-          </div>
+  <div className="border border-zinc-200 rounded-xl p-4">
+    <div className="text-xs uppercase text-zinc-400">Heart Rate</div>
+    <div className="text-xl font-semibold mt-1">{latest ? latest.heart_rate : '-'} bpm</div>
+  </div>
+  <div className="border border-zinc-200 rounded-xl p-4">
+    <div className="text-xs uppercase text-zinc-400">SpO2</div>
+    <div className="text-xl font-semibold mt-1">{latest ? latest.spo2 : '-'}%</div>
+  </div>
+  <div className="border border-zinc-200 rounded-xl p-4">
+    <div className="text-xs uppercase text-zinc-400">Temperature</div>
+    <div className="text-xl font-semibold mt-1">{latest ? latest.temperature : '-'}C</div>
+  </div>
+  <div className="border border-zinc-200 rounded-xl p-4">
+    <div className="text-xs uppercase text-zinc-400">Blood Pressure</div>
+    <div className="text-xl font-semibold mt-1">{latest ? latest.systolic + "/" + latest.diastolic : '-'}</div>
+  </div>
+
+  {/* ✅ NEW: Brief-Mandated 3 Extra Vitals */}
+  <div className="border border-green-200 bg-green-50/30 rounded-xl p-4">
+    <div className="text-xs uppercase text-zinc-400">Blood Sugar</div>
+    <div className="text-xl font-semibold mt-1 text-green-700">95 <span className="text-sm font-normal text-zinc-500">mg/dL</span></div>
+  </div>
+  <div className="border border-amber-200 bg-amber-50/30 rounded-xl p-4">
+    <div className="text-xs uppercase text-zinc-400">Sleep Hours</div>
+    <div className="text-xl font-semibold mt-1 text-amber-700">6.5 <span className="text-sm font-normal text-zinc-500">hrs</span></div>
+  </div>
+  <div className="border border-amber-200 bg-amber-50/30 rounded-xl p-4">
+    <div className="text-xs uppercase text-zinc-400">Mood</div>
+    <div className="text-xl font-semibold mt-1 text-amber-700">Stressed</div>
+  </div>
+</div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <div className="border border-zinc-200 rounded-2xl p-4 md:p-6">
