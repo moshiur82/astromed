@@ -1,7 +1,14 @@
-
 import { useState, useEffect } from 'react';
 
-type Task = { id: string; title: string; desc: string; points: number; done: boolean; type: 'vital' | 'exercise' | 'sleep' | 'mood'; time: string };
+type Task = {
+  id: string;
+  title: string;
+  desc: string;
+  points: number;
+  done: boolean;
+  type: 'vital' | 'exercise' | 'sleep' | 'mood';
+  time: string;
+};
 
 const defaultTasks: Task[] = [
   { id: '1', title: 'Morning Vitals Check', desc: 'Measure HR, SpO2, BP, Temp before breakfast', points: 20, done: true, type: 'vital', time: '07:00 UTC' },
@@ -16,36 +23,46 @@ export default function GamificationBoard() {
   const [streak, setStreak] = useState(3);
   const [showConfetti, setShowConfetti] = useState<string | null>(null);
 
-  const doneCount = tasks.filter(t=>t.done).length;
-  const totalPoints = tasks.filter(t=>t.done).reduce((s,t)=>s+t.points,0);
-  const healthScore = Math.min(100, 55 + totalPoints + streak*2 + doneCount*3);
-  const completion = Math.round((doneCount / tasks.length)*100);
+  const doneCount = tasks.filter((t) => t.done).length;
+  const totalPoints = tasks.filter((t) => t.done).reduce((s, t) => s + t.points, 0);
+  const healthScore = Math.min(100, 55 + totalPoints + streak * 2 + doneCount * 3);
+  const completion = Math.round((doneCount / tasks.length) * 100);
 
   useEffect(() => {
     const saved = localStorage.getItem('astromed-tasks');
-    if(saved){ try{ setTasks(JSON.parse(saved)); }catch{} }
+    if (saved) {
+      try {
+        setTasks(JSON.parse(saved));
+      } catch {
+        // ignore corrupted data
+      }
+    }
     const s = localStorage.getItem('astromed-streak');
-    if(s) setStreak(Number(s));
+    if (s) setStreak(Number(s));
   }, []);
+
   useEffect(() => {
     localStorage.setItem('astromed-tasks', JSON.stringify(tasks));
   }, [tasks]);
 
+  // ✅ FIX: Side effects (setShowConfetti / setTimeout) moved OUT of setTasks updater
   const toggle = (id: string) => {
-    setTasks(prev => prev.map(t => {
-      if(t.id===id && !t.done){
-        setShowConfetti(id);
-        setTimeout(()=>setShowConfetti(null), 1000);
-        return {...t, done: true};
-      }
-      return t.id===id ? {...t, done: !t.done} : t;
-    }));
+    const task = tasks.find((t) => t.id === id);
+    if (!task) return;
+
+    if (!task.done) {
+      setShowConfetti(id);
+      setTimeout(() => setShowConfetti(null), 1000);
+    }
+
+    setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, done: !t.done } : t)));
   };
 
   const completeAll = () => {
-    setTasks(prev => prev.map(t => ({...t, done: true})));
-    setStreak(s=>s+1);
-    localStorage.setItem('astromed-streak', String(streak+1));
+    setTasks((prev) => prev.map((t) => ({ ...t, done: true })));
+    const nextStreak = streak + 1;
+    setStreak(nextStreak);
+    localStorage.setItem('astromed-streak', String(nextStreak));
   };
 
   return (
@@ -56,10 +73,20 @@ export default function GamificationBoard() {
           <div className="text-[10px] tracking-[0.08em] text-zinc-400">HEALTH SCORE</div>
           <div className="flex items-baseline gap-2 mt-2">
             <div className="text-[28px] font-bold tracking-tight">{healthScore}%</div>
-            <div className={`text-[11px] px-2 py-0.5 rounded-full ${healthScore>=80 ? 'bg-green-500/20 text-green-300' : healthScore>=60 ? 'bg-amber-500/20 text-amber-300' : 'bg-red-500/20 text-red-300'}`}>{healthScore>=80 ? 'Excellent' : healthScore>=60 ? 'Good' : 'Attention'}</div>
+            <div
+              className={`text-[11px] px-2 py-0.5 rounded-full ${
+                healthScore >= 80
+                  ? 'bg-green-500/20 text-green-300'
+                  : healthScore >= 60
+                  ? 'bg-amber-500/20 text-amber-300'
+                  : 'bg-red-500/20 text-red-300'
+              }`}
+            >
+              {healthScore >= 80 ? 'Excellent' : healthScore >= 60 ? 'Good' : 'Attention'}
+            </div>
           </div>
           <div className="mt-3 h-1.5 bg-white/10 rounded-full overflow-hidden">
-            <div className="h-full bg-white transition-all" style={{width: healthScore+'%'}}></div>
+            <div className="h-full bg-white transition-all" style={{ width: healthScore + '%' }}></div>
           </div>
           <div className="text-[10px] text-zinc-500 mt-2">Based on tasks, vitals, sleep</div>
         </div>
@@ -73,8 +100,11 @@ export default function GamificationBoard() {
           </div>
           <div className="text-[11px] text-zinc-500 mt-1">Keep checking daily!</div>
           <div className="mt-3 flex gap-1">
-            {Array.from({length:7}).map((_,i)=>(
-              <div key={i} className={`h-1.5 flex-1 rounded-full ${i < streak ? 'bg-zinc-900' : 'bg-zinc-100'}`}></div>
+            {Array.from({ length: 7 }).map((_, i) => (
+              <div
+                key={i}
+                className={`h-1.5 flex-1 rounded-full ${i < streak ? 'bg-zinc-900' : 'bg-zinc-100'}`}
+              ></div>
             ))}
           </div>
         </div>
@@ -94,44 +124,97 @@ export default function GamificationBoard() {
         <div className="bg-white border border-zinc-200 rounded-[16px] p-4">
           <div className="text-[10px] tracking-[0.08em] text-zinc-500">COMPLETION</div>
           <div className="text-[24px] font-bold mt-2">{completion}%</div>
-          <div className="text-[11px] text-zinc-500">{doneCount} of {tasks.length} tasks</div>
-          <button onClick={completeAll} className="mt-3 w-full text-[11px] px-3 py-2 rounded-full bg-zinc-900 text-white hover:bg-black transition">Complete all + 🔥 streak</button>
+          <div className="text-[11px] text-zinc-500">
+            {doneCount} of {tasks.length} tasks
+          </div>
+          <button
+            onClick={completeAll}
+            className="mt-3 w-full text-[11px] px-3 py-2 rounded-full bg-zinc-900 text-white hover:bg-black transition"
+          >
+            Complete all + 🔥 streak
+          </button>
         </div>
       </div>
 
-      {/* Daily Tasks - Prompt astronauts to take measurements */}
+      {/* Daily Tasks */}
       <div className="bg-white border border-zinc-200 rounded-[20px] overflow-hidden">
         <div className="px-6 py-4 border-b border-zinc-100 flex items-center justify-between">
           <div>
             <h3 className="text-[13px] font-semibold">Today's Health Routine - Prompted Measurements</h3>
-            <p className="text-[11px] text-zinc-500 mt-0.5">NASA HRP recommends daily checks - Tap to complete, earn points</p>
+            <p className="text-[11px] text-zinc-500 mt-0.5">
+              NASA HRP recommends daily checks - Tap to complete, earn points
+            </p>
           </div>
-          <div className="text-[10px] px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200">Brief Requirement: Prompt to measure</div>
+          <div className="text-[10px] px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
+            Brief Requirement: Prompt to measure
+          </div>
         </div>
 
         <div className="p-3 grid gap-2">
-          {tasks.map(t => (
-            <div key={t.id} className={`group flex items-center gap-3 p-3 rounded-xl border transition-all cursor-pointer ${t.done ? 'bg-zinc-50 border-zinc-200' : 'bg-white border-zinc-200 hover:border-zinc-900 hover:shadow-sm'} ${showConfetti===t.id ? 'animate-pulse' : ''}`} onClick={()=>toggle(t.id)}>
-              <div className={`w-9 h-9 rounded-full flex items-center justify-center text-[13px] shrink-0 ${t.done ? 'bg-zinc-900 text-white' : 'bg-white border border-zinc-200 text-zinc-500 group-hover:border-zinc-900'}`}>
-                {t.done ? '✓' : t.type==='vital' ? '♥' : t.type==='sleep' ? '☾' : t.type==='mood' ? '◑' : '↗'}
+          {tasks.map((t) => (
+            <div
+              key={t.id}
+              className={`group flex items-center gap-3 p-3 rounded-xl border transition-all cursor-pointer ${
+                t.done
+                  ? 'bg-zinc-50 border-zinc-200'
+                  : 'bg-white border-zinc-200 hover:border-zinc-900 hover:shadow-sm'
+              } ${showConfetti === t.id ? 'animate-pulse' : ''}`}
+              onClick={() => toggle(t.id)}
+            >
+              <div
+                className={`w-9 h-9 rounded-full flex items-center justify-center text-[13px] shrink-0 ${
+                  t.done
+                    ? 'bg-zinc-900 text-white'
+                    : 'bg-white border border-zinc-200 text-zinc-500 group-hover:border-zinc-900'
+                }`}
+              >
+                {t.done ? '✓' : t.type === 'vital' ? '♥' : t.type === 'sleep' ? '☾' : t.type === 'mood' ? '◑' : '↗'}
               </div>
               <div className="flex-1 min-w-0">
-                <div className={`text-[13px] font-medium flex items-center gap-2 ${t.done ? 'text-zinc-500 line-through' : 'text-zinc-900'}`}>
+                <div
+                  className={`text-[13px] font-medium flex items-center gap-2 ${
+                    t.done ? 'text-zinc-500 line-through' : 'text-zinc-900'
+                  }`}
+                >
                   {t.title}
-                  <span className={`text-[10px] px-2 py-0.5 rounded-full ${t.type==='vital' ? 'bg-red-50 text-red-600 border border-red-100' : t.type==='sleep' ? 'bg-indigo-50 text-indigo-600 border border-indigo-100' : t.type==='mood' ? 'bg-amber-50 text-amber-600 border border-amber-100' : 'bg-zinc-100 text-zinc-600'}`}>{t.type}</span>
+                  <span
+                    className={`text-[10px] px-2 py-0.5 rounded-full ${
+                      t.type === 'vital'
+                        ? 'bg-red-50 text-red-600 border border-red-100'
+                        : t.type === 'sleep'
+                        ? 'bg-indigo-50 text-indigo-600 border border-indigo-100'
+                        : t.type === 'mood'
+                        ? 'bg-amber-50 text-amber-600 border border-amber-100'
+                        : 'bg-zinc-100 text-zinc-600'
+                    }`}
+                  >
+                    {t.type}
+                  </span>
                 </div>
-                <div className="text-[11px] text-zinc-500 mt-0.5 truncate">{t.desc} • {t.time} • +{t.points} pts</div>
+                <div className="text-[11px] text-zinc-500 mt-0.5 truncate">
+                  {t.desc} • {t.time} • +{t.points} pts
+                </div>
               </div>
               <div className="text-right shrink-0">
-                <div className={`text-[10px] px-2 py-1 rounded-full ${t.done ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-zinc-50 text-zinc-500 border border-zinc-200'}`}>{t.done ? 'Done' : 'Tap to do'}</div>
-                {showConfetti===t.id && <div className="text-[12px] mt-1">+{t.points} 🎉</div>}
+                <div
+                  className={`text-[10px] px-2 py-1 rounded-full ${
+                    t.done
+                      ? 'bg-green-50 text-green-700 border border-green-200'
+                      : 'bg-zinc-50 text-zinc-500 border border-zinc-200'
+                  }`}
+                >
+                  {t.done ? 'Done' : 'Tap to do'}
+                </div>
+                {showConfetti === t.id && <div className="text-[12px] mt-1">+{t.points} 🎉</div>}
               </div>
             </div>
           ))}
         </div>
 
         <div className="px-6 py-3 bg-zinc-50/70 border-t border-zinc-100 flex items-center justify-between text-[10px] text-zinc-500">
-          <span>NASA Reference: HRP 5 Hazards - Daily monitoring prevents critical events • Data saved locally for offline space use</span>
+          <span>
+            NASA Reference: HRP 5 Hazards - Daily monitoring prevents critical events • Data saved locally for offline space use
+          </span>
           <span className="hidden md:inline">Tip: Complete daily to keep Health Score high</span>
         </div>
       </div>
