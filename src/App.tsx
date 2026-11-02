@@ -1,8 +1,16 @@
 import HumanBodyMap from './components/HumanBodyMap'
+import GamificationBoard from './components/GamificationBoard'
 import { useState, useEffect } from 'react'
 import { supabase } from './lib/supabase'
 import Logo from './components/Logo'
-
+<div className="grid grid-cols-2 lg:grid-cols-4 gap-3 ..."> // 4 Cards Active Crew etc
+  
+            </div>
+            {/* Feature 2 - Gamification */}
+            <div className="mt-6">
+              <GamificationBoard />
+            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4"></div>// Heart Rate + Systems
 type Astronaut = { id: number; name: string; mission: string; role: string; status: string }
 type Vital = { id: number; astronaut_id: number; heart_rate: number; spo2: number; temperature: number; systolic: number; diastolic: number; created_at: string }
 type System = { id: number; system_name: string; status: string; value: string; unit: string }

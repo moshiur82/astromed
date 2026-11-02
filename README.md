@@ -1,5 +1,9 @@
 AstroMed AI: Space Health Monitoring Platform
+<<<<<<< HEAD
 Challenge: Create Health Monitoring Software for Astronauts on Space Missions - NASA Space Apps 2026
+=======
+Challenge: Create Health Monitoring Software for Astronauts on Space Missions - NASA Space Apps 2025
+>>>>>>> e9ec81d (fix: save local HumanBodyMap integration)
 
 Live Demo: https://astromed-rho.vercel.app
 Python ML API: https://astromed-rho.vercel.app/api/predict
@@ -17,4 +21,8 @@ git clone https://github.com/moshiur82/astromed.git
 npm install
 # .env.local: VITE_SUPABASE_URL and ANON_KEY
 npm run dev
+<<<<<<< HEAD
 npm run build
+=======
+npm run build
+>>>>>>> e9ec81d (fix: save local HumanBodyMap integration)

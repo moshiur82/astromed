@@ -189,7 +189,7 @@ export default function HumanBodyMap() {
               <p className="text-[12px] leading-[1.6] text-zinc-100">{selected.instruction}</p>
               <div className="mt-3 flex items-center gap-2 text-[10px]">
                 <span className="px-2 py-1 rounded-full bg-white/10 border border-white/10">Normal: {selected.normal}</span>
-                <span className="px-2 py-1 rounded-full bg-white/10 border border-white/10">Action: < 2 min</span>
+                <span className="px-2 py-1 rounded-full bg-white/10 border border-white/10">Action: { "< 2 min" }</span>
               </div>
             </div>
 
