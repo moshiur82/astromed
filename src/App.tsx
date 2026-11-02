@@ -219,8 +219,7 @@ export default function App() {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-8">
-            {/* Original 4 Cards */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-8">
             <div className="border border-zinc-200 rounded-xl p-4">
               <div className="text-xs uppercase text-zinc-400">Heart Rate</div>
               <div className="text-xl font-semibold mt-1">
@@ -244,24 +243,6 @@ export default function App() {
               <div className="text-xl font-semibold mt-1">
                 {latest ? latest.systolic + '/' + latest.diastolic : '-'}
               </div>
-            </div>
-
-            {/* ✅ NEW: Brief-Mandated 3 Extra Vitals */}
-            <div className="border border-green-200 bg-green-50/30 rounded-xl p-4">
-              <div className="text-xs uppercase text-zinc-400">Blood Sugar</div>
-              <div className="text-xl font-semibold mt-1 text-green-700">
-                95 <span className="text-sm font-normal text-zinc-500">mg/dL</span>
-              </div>
-            </div>
-            <div className="border border-amber-200 bg-amber-50/30 rounded-xl p-4">
-              <div className="text-xs uppercase text-zinc-400">Sleep Hours</div>
-              <div className="text-xl font-semibold mt-1 text-amber-700">
-                6.5 <span className="text-sm font-normal text-zinc-500">hrs</span>
-              </div>
-            </div>
-            <div className="border border-amber-200 bg-amber-50/30 rounded-xl p-4">
-              <div className="text-xs uppercase text-zinc-400">Mood</div>
-              <div className="text-xl font-semibold mt-1 text-amber-700">Stressed</div>
             </div>
           </div>
 
@@ -326,7 +307,7 @@ export default function App() {
               </div>
             </div>
             <div className="mt-4 text-xs text-zinc-500">
-              Model: {aiResult ? aiResult.model : 'AstroMed ML v1'} - Live Edge API
+              Model: {aiResult ? aiResult.model : 'AstroMed ML v1'} - Live Python API
             </div>
           </div>
 
