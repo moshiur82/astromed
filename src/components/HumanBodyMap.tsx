@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 
 type BodyPart = {
@@ -10,7 +9,6 @@ type BodyPart = {
   whySpace: string;
   instruction: string;
   hazard: string;
-  color: string;
 };
 
 const bodyParts: BodyPart[] = [
@@ -72,7 +70,6 @@ export default function HumanBodyMap() {
 
   return (
     <div className="w-full bg-white border border-zinc-200 rounded-[20px] overflow-hidden">
-      {/* Header */}
       <div className="px-6 py-4 border-b border-zinc-100 flex items-center justify-between">
         <div>
           <h3 className="text-[13px] font-semibold tracking-[-0.01em] text-zinc-900">Interactive Human System - Click to Explore</h3>
@@ -82,11 +79,9 @@ export default function HumanBodyMap() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-0">
-        {/* Left: Body SVG */}
         <div className="bg-zinc-50/70 p-6 flex flex-col items-center border-r border-zinc-100">
           <div className="text-[11px] text-zinc-500 mb-4 tracking-wide">CLICK A BODY PART ↓</div>
           <svg viewBox="0 0 200 340" className="w-[200px] h-[340px]">
-            {/* Head */}
             <g 
               onClick={() => setSelected(bodyParts[2])}
               onMouseEnter={() => setHovered('brain')}
@@ -98,7 +93,6 @@ export default function HumanBodyMap() {
               <text x="100" y="82" textAnchor="middle" fontSize="9" fill="#71717a" className="pointer-events-none">Brain</text>
             </g>
 
-            {/* Heart - Left Chest */}
             <g 
               onClick={() => setSelected(bodyParts[0])}
               onMouseEnter={() => setHovered('heart')}
@@ -110,7 +104,6 @@ export default function HumanBodyMap() {
               <text x="46" y="115" textAnchor="middle" fontSize="8.5" fill="#52525b" className="pointer-events-none font-medium">Heart</text>
             </g>
 
-            {/* Lungs - Right Chest */}
             <g 
               onClick={() => setSelected(bodyParts[1])}
               onMouseEnter={() => setHovered('lungs')}
@@ -122,10 +115,8 @@ export default function HumanBodyMap() {
               <text x="162" y="115" textAnchor="middle" fontSize="8.5" fill="#52525b" className="pointer-events-none font-medium">Lungs</text>
             </g>
 
-            {/* Body Outline - faint */}
             <path d="M70 78 L60 160 L65 260 L85 260 L90 160 L110 160 L115 260 L135 260 L140 160 L130 78 Z" fill="none" stroke="#f4f4f5" strokeWidth="1" />
             
-            {/* Temp - Center Abdomen */}
             <g 
               onClick={() => setSelected(bodyParts[3])}
               onMouseEnter={() => setHovered('temp')}
@@ -136,7 +127,6 @@ export default function HumanBodyMap() {
               <text x="100" y="173" textAnchor="middle" fontSize="13" fill={hovered==='temp' || selected.id==='temp' ? 'white' : '#71717a'} className="pointer-events-none">◒</text>
             </g>
 
-            {/* Blood - Lower */}
             <g 
               onClick={() => setSelected(bodyParts[4])}
               onMouseEnter={() => setHovered('blood')}
@@ -147,7 +137,6 @@ export default function HumanBodyMap() {
               <text x="100" y="217" textAnchor="middle" fontSize="11" fill={hovered==='blood' || selected.id==='blood' ? 'white' : '#71717a'} className="pointer-events-none">⬢</text>
             </g>
 
-            {/* Labels bottom */}
             <text x="100" y="245" textAnchor="middle" fontSize="8" fill="#a1a1aa">Temp</text>
             <text x="100" y="285" textAnchor="middle" fontSize="8" fill="#a1a1aa">Blood Sugar</text>
           </svg>
@@ -165,7 +154,6 @@ export default function HumanBodyMap() {
           </div>
         </div>
 
-        {/* Right: Details */}
         <div className="p-6">
           <div className="flex items-start justify-between gap-4">
             <div className="flex items-center gap-3">
@@ -189,7 +177,7 @@ export default function HumanBodyMap() {
               <p className="text-[12px] leading-[1.6] text-zinc-100">{selected.instruction}</p>
               <div className="mt-3 flex items-center gap-2 text-[10px]">
                 <span className="px-2 py-1 rounded-full bg-white/10 border border-white/10">Normal: {selected.normal}</span>
-                <span className="px-2 py-1 rounded-full bg-white/10 border border-white/10">Action: { "< 2 min" }</span>
+                <span className="px-2 py-1 rounded-full bg-white/10 border border-white/10">Action: {"< 2 min"}</span>
               </div>
             </div>
 
