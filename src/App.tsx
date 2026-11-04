@@ -636,23 +636,40 @@ export default function App() {
           </>
         )}
 
-        <footer className="border-t border-zinc-200 mt-16">
-  <div className="max-w-6xl mx-auto px-4 md:px-8 py-8">
-    <div className="flex flex-col md:flex-row items-center justify-between gap-3">
-      <div className="flex items-center gap-2 text- text-zinc-500">
-        <span className="text-zinc-900 font-medium tracking-[-0.01em]">AstroMed AI</span>
-        <span className="w-1 h-1 rounded-full bg-zinc-300"></span>
-        <span>NASA Space Apps Challenge 2026</span>
-        <span className="w-1 h-1 rounded-full bg-zinc-300"></span>
-        <span>Artemis III • ISS 72 • Lunar Gateway</span>
+       <footer className="border-t border-zinc-100 mt-20 bg-white">
+  <div className="max-w-6xl mx-auto px-4 md:px-8">
+    {/* Main Row */}
+    <div className="py-8 md:py-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+      {/* Left - Brand & Mission */}
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-5">
+        <div className="flex items-center gap-2.5">
+          <span className="text- font-semibold tracking-tight text-zinc-900">AstroMed AI</span>
+          <span className="hidden sm:inline-flex h-3 w-px bg-zinc-200"></span>
+          <span className="text- text-zinc-500 tracking-[-0.01em]">【entity-NASA¦canonical_name=NASA】 Space Apps Challenge 2026</span>
+        </div>
+        <div className="flex items-center gap-2 text- text-zinc-400 border border-zinc-100 rounded-full px-3 py-1 w-fit">
+          <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+          Artemis III • ISS 72 • Lunar Gateway
+        </div>
       </div>
-      <div className="text- text-zinc-500 flex items-center gap-2">
-        <span>Design and develop by:</span>
-        <span className="px-2.5 py-1 rounded-full bg-zinc-900 text-white text- font-medium tracking-[-0.01em]">Mohammad Moshiur Rahman, ArtisticIT</span>
+
+      {/* Right - Credit */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3">
+        <span className="text- text-zinc-400 uppercase tracking-widest">Design and develop by</span>
+        <span className="inline-flex items-center rounded-full bg-zinc-900 px-4 py-2 text- font-medium text-white tracking-[-0.01em] shadow-sm">
+          Mohammad Moshiur Rahman, ArtisticIT
+        </span>
       </div>
     </div>
-    <div className="mt-4 text- text-zinc-400 text-center md:text-left">
-      Data: NASA OSDR Twins Study | NASA Human Research Program | NASA-STD-3001 | Model: AstroMed ML v1 - Live Python API | PWA Offline Ready
+
+    {/* Bottom Row - Data */}
+    <div className="border-t border-zinc-50 py-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-2">
+      <div className="text- leading-relaxed text-zinc-400 max-w-3xl">
+        Data Sources: 【entity-NASA¦canonical_name=NASA】 OSDR Twins Study • Human Research Program • 【entity-NASA¦canonical_name=NASA】-STD-3001 • Model: AstroMed ML v1 • Live Python API • PWA Offline Ready
+      </div>
+      <div className="text- text-zinc-400">
+        © 2026 AstroMed AI — Built for Space
+      </div>
     </div>
   </div>
 </footer>
