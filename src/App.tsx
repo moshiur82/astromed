@@ -635,6 +635,28 @@ export default function App() {
             </div>
           </>
         )}
+
+        <footer className="border-t border-zinc-200 mt-16">
+  <div className="max-w-6xl mx-auto px-4 md:px-8 py-8">
+    <div className="flex flex-col md:flex-row items-center justify-between gap-3">
+      <div className="flex items-center gap-2 text- text-zinc-500">
+        <span className="text-zinc-900 font-medium tracking-[-0.01em]">AstroMed AI</span>
+        <span className="w-1 h-1 rounded-full bg-zinc-300"></span>
+        <span>NASA Space Apps Challenge 2026</span>
+        <span className="w-1 h-1 rounded-full bg-zinc-300"></span>
+        <span>Artemis III • ISS 72 • Lunar Gateway</span>
+      </div>
+      <div className="text- text-zinc-500 flex items-center gap-2">
+        <span>Design and develop by:</span>
+        <span className="px-2.5 py-1 rounded-full bg-zinc-900 text-white text- font-medium tracking-[-0.01em]">Mohammad Moshiur Rahman, ArtisticIT</span>
+      </div>
+    </div>
+    <div className="mt-4 text- text-zinc-400 text-center md:text-left">
+      Data: NASA OSDR Twins Study | NASA Human Research Program | NASA-STD-3001 | Model: AstroMed ML v1 - Live Python API | PWA Offline Ready
+    </div>
+  </div>
+</footer>
+
       </main>
     </div>
   )
