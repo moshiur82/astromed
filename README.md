@@ -10,7 +10,7 @@ Python ML API: https://astromed-rho.vercel.app/api/predict
 GitHub: https://github.com/moshiur82/astromed
 
 Project Summary
-AstroMed AI is a real-time, Apple-inspired space health monitoring platform designed for Artemis III, ISS Expedition 72, and Lunar Gateway missions.
+AstroMed AI is a real-time space health monitoring platform designed for Artemis III, ISS Expedition 72, and Lunar Gateway missions.
 
 Monitors vital signs (Heart Rate, SpO2, Temperature, BP), stress, and environmental systems through pure white UI optimized for mission control.
 
